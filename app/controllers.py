@@ -23,17 +23,37 @@ def predict_sentiment(sentence, index):
     if index == 'K':
         real_label = labels_korean[predicted_label]
     elif index == 'E':
-        real_label = labels_english[predicted_label]
+        real_label = labels_korean[predicted_label]
 
     return real_label
+
+
+def split_sentences(text):
+    text = text.replace('...', '☉')
+    sentences = re.split(r'(?<=[.!?☉])', text)
+    for i in range(0, len(sentences)):
+        sentences[i] = sentences[i].replace('☉', '...')
+    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+
+    return sentences
 
 
 @app.route('/classify/korean', methods=['POST'])
 def classify_korean_text():
     if 'text' in request.json:
         text = request.json['text']
-        sentiment = predict_sentiment(text, 'K')
-        return jsonify({"sentiment": sentiment})
+        sentences = split_sentences(text)
+
+        results = []
+
+        for sentence in sentences:
+            sentiment = predict_sentiment(sentence, 'K')
+            results.append({
+                "sentence": sentence,
+                "sentiment": sentiment
+            })
+
+        return jsonify(results)
     else:
         return jsonify({'error': 'Missing text in request'}), 400
 
@@ -42,7 +62,17 @@ def classify_korean_text():
 def classify_english_text():
     if 'text' in request.json:
         text = request.json['text']
-        sentiment = predict_sentiment(text, 'E')
-        return jsonify({"sentiment": sentiment})
+        sentences = split_sentences(text)
+
+        results = []
+
+        for sentence in sentences:
+            sentiment = predict_sentiment(sentence, 'E')
+            results.append({
+                "sentence": sentence,
+                "sentiment": sentiment
+            })
+
+        return jsonify(results)
     else:
         return jsonify({'error': 'Missing text in request'}), 400

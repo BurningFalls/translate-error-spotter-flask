@@ -8,7 +8,7 @@ text_classifier_korean = TextClassificationPipeline(
     tokenizer=loaded_tokenizer_korean,
     model=loaded_model_korean,
     framework='tf',
-    top_k=1,
+    top_k=4,
     truncation=True
 )
 
@@ -21,6 +21,6 @@ text_classifier_english = TextClassificationPipeline(
     tokenizer=loaded_tokenizer_english,
     model=loaded_model_english,
     framework='tf',
-    top_k=1,
+    top_k=4,
     truncation=True
 )
